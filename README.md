@@ -4,6 +4,7 @@ To run osnap.wlua, you'll need:
 
 - [Lua](http://lua.org)
 - [IUPLua](http://www.tecgraf.puc-rio.br/iup/)
+- [IMLua](http://www.tecgraf.puc-rio.br/im/)
 - [LuaGL](http://luagl.sourceforge.net/)
 
 On Windows, you can get all this and more by installing [Lua for Windows](http://code.google.com/p/luaforwindows/downloads/detail?name=LuaForWindows_v5.1.4-45.exe).
@@ -18,5 +19,10 @@ Run with wlua. Stop with Task Manager (the script won't stop on its own right no
 
 Features missing for 1.0:
 
+- Clean closing
 - Image saving
 - Preview flipping and scaling
+
+Future
+
+- Overlay(s)
