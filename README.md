@@ -19,7 +19,6 @@ Run with wlua. Stop with Task Manager (the script won't stop on its own right no
 
 Features missing for 1.0:
 
-- Clean closing
 - Image saving
 - Preview flipping and scaling
 

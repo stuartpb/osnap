@@ -16,8 +16,6 @@ local frbuf = im.ImageCreate(capw, caph, im.RGB, im.BYTE)
 local gldata, glformat = frbuf:GetOpenGLData()
 
 cnv = iup.glcanvas{buffer="DOUBLE", rastersize = initimgsize}
-iup.GLMakeCurrent(cnv)
-gl.Viewport(0, 0, capw, caph)
 
 function cnv:resize_cb(width, height)
   iup.GLMakeCurrent(self)
@@ -39,11 +37,10 @@ vc:Live(1)
 
 local dlg = iup.dialog{title = "Oh Snap!", cnv}
 
-function dlg:unmap_cb()
-  vc:Live(0)
-  vc:Disconnect()
-  vc:Destroy()
-  cappan = false
+local in_loop = true
+
+function dlg:close_cb()
+  in_loop = false
 end
 
 function dlg:k_any(c)
@@ -65,10 +62,15 @@ end
 
 dlg:show()
 
-local cappan = true
-
-while cappan do
+while in_loop do
   vc:Frame(frbuf,-1)
   iup.Update(cnv)
-  iup.LoopStep()
+  local result = iup.LoopStep()
+  if result == iup.CLOSE then
+    in_loop = false
+  end
 end
+
+vc:Live(0)
+vc:Disconnect()
+vc:Destroy()
