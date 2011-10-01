@@ -13,14 +13,12 @@ Outside of Windows, check your local package manager (which will most likely hav
 
 # Running
 
-Run with wlua. Stop with Task Manager (the script won't stop on its own right now).
+Run osnap.wlua with a Lua interpreter like wlua.exe for Windows.
 
 # TODO
 
-Features missing for 1.0:
-
-- Image saving
-- Preview flipping and scaling
+Features missing for 1.1:
+- Preview flipping
 
 Future
 
