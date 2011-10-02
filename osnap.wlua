@@ -65,9 +65,8 @@ local rbutton = iup.button{title = "Oh Snap!", action = save_image}
 local dlg = iup.dialog{
   title = "Oh Snap!",
   placement = "MAXIMIZED";
-  iup.hbox{lbutton,cnv,rbutton}}
-
-local in_loop = true
+  iup.hbox{lbutton,cnv,rbutton}
+}
 
 function dlg:resize_cb(w,h)
   local cw, ch = bwar(w,h,cap_ratio)
@@ -78,12 +77,15 @@ function dlg:resize_cb(w,h)
   rbutton.rastersize = ixi(rbutw, h)
 end
 
-function dlg:close_cb()
-  --Stop the IUP pseudo-loop.
-  --Don't ask me why this works and returning iup.CLOSE doesn't.
-  iup.ExitLoop()
-  return iup.IGNORE
+local function refresh_frame()
+  vc:Frame(frbuf,-1)
+  iup.Update(cnv)
 end
+
+local frame_timer = iup.timer{
+  time = 10,
+  action_cb = refresh_frame
+}
 
 function dlg:k_any(c)
   if c == iup.K_q or c == iup.K_ESC then
@@ -103,17 +105,9 @@ function dlg:k_any(c)
 end
 
 dlg:show()
+frame_timer.run = "YES"
 
---Event loop
-while in_loop do
-  --Capture the next frame from the camera
-  vc:Frame(frbuf,-1)
-  iup.Update(cnv)
-  local result = iup.LoopStep()
-  if result == iup.CLOSE then
-    in_loop = false
-  end
-end
+iup.MainLoop()
 
 vc:Live(0)
 vc:Disconnect()
