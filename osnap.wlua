@@ -30,8 +30,25 @@ local dragfactor = 1
 local frbuf = im.ImageCreate(capw, caph, im.RGB, im.BYTE)
 local gldata, glformat = frbuf:GetOpenGLData()
 
---expand=no because the dialog handles the resize personally
-cnv = iup.glcanvas{buffer="DOUBLE", rastersize = ixi(canw, canh), expand = 'no', border = 'no'}
+cnv = iup.glcanvas{
+  buffer="DOUBLE",
+  rastersize = ixi(canw, canh),
+  expand = 'no', -- the dialog resizes the canvas in its callback
+  border = 'no'
+}
+
+--Function that determines filenames for new images.
+local function get_filename()
+  --The user's home directory on Windows 7 (ie. 'C:\Users\Stuart').
+  local user_dir = os.getenv"USERPROFILE"
+  --The Pictures directory.
+  local pics_dir = user_dir .. '/Pictures'
+  --The directory for osnap images.
+  local osnap_dir = pics_dir .. '/osnap'
+  --The filename format.
+  --todo: check if filename is already taken and don't clobber it
+  return string.format(osnap_dir .. "/%i.jpg", os.time())
+end
 
 -- biggest within aspect ratio
 -- reverse the logic for Biggest Containing Aspect Ratio
@@ -44,8 +61,7 @@ local function bwar(width, height, ratio)
 end
 
 local function save_image()
-  local filename = string.format("%i.jpg",os.time())
-  --todo: check if filename is already taken and don't clobber it
+  local filename = get_filename()
   frbuf:Save(filename,"JPEG")
 end
 
