@@ -18,6 +18,12 @@ local function ixi(i1, i2)
   return string.format("%ix%i", i1, i2)
 end
 
+local max = math.max
+local min = math.min
+local function clamp(number, low, high)
+  return min(max(low,number),high)
+end
+
 local flipfactor = 1
 local dragfactor = 1
 
@@ -45,7 +51,9 @@ end
 
 local function resize_cap()
   iup.GLMakeCurrent(cnv)
-  gl.RasterPos(-(flipfactor * dragfactor),-1)
+  gl.RasterPos(
+    -(flipfactor * dragfactor),
+    -1)
   gl.PixelZoom(canw / capw * flipfactor * dragfactor, canh / caph)
 end
 
@@ -58,7 +66,7 @@ do
   local dox, doy
   local function drag(x, y)
     local cw = canw/2
-    dragfactor = (x - cw) / (dox - cw)
+    dragfactor = clamp((x - cw) / (dox - cw),-1,1)
     resize_cap()
   end
 
