@@ -12,6 +12,8 @@ local capw, caph = vc:GetImageSize()
 --aspect ratio of the capture feed
 local cap_ratio = capw / caph --almost certainly 4/3 but
 
+local canw, canh = capw, caph
+
 local function ixi(i1, i2)
   return string.format("%ix%i", i1, i2)
 end
@@ -22,7 +24,7 @@ local frbuf = im.ImageCreate(capw, caph, im.RGB, im.BYTE)
 local gldata, glformat = frbuf:GetOpenGLData()
 
 --expand=no because the dialog handles the resize personally
-cnv = iup.glcanvas{buffer="DOUBLE", rastersize = ixi(capw, caph), expand = 'no', border = 'no'}
+cnv = iup.glcanvas{buffer="DOUBLE", rastersize = ixi(canw, canh), expand = 'no', border = 'no'}
 
 -- biggest within aspect ratio
 -- reverse the logic for Biggest Containing Aspect Ratio
@@ -34,11 +36,17 @@ local function bwar(width, height, ratio)
   end
 end
 
+local function resize_cap()
+  iup.GLMakeCurrent(cnv)
+  gl.RasterPos(-flipfactor,-1)
+  gl.PixelZoom(canw / capw * flipfactor, canh / caph)
+end
+
 function cnv:resize_cb(width, height)
   iup.GLMakeCurrent(self)
   gl.Viewport(0, 0, width, height)
-  gl.RasterPos(-flipfactor,-1)
-  gl.PixelZoom(width / capw * flipfactor, height / caph)
+  canw, canh = width, height
+  resize_cap()
 end
 
 function cnv:action(x, y)
@@ -50,7 +58,6 @@ function cnv:action(x, y)
   iup.GLSwapBuffers(self)
 end
 
-
 vc:Live(1)
 
 local function save_image()
@@ -59,13 +66,19 @@ local function save_image()
   frbuf:Save(filename,"JPEG")
 end
 
+local function flip()
+  flipfactor = -flipfactor
+  resize_cap()
+end
+
 local lbutton = iup.button{title = "Oh Snap!", action = save_image}
-local rbutton = iup.button{title = "Oh Snap!", action = save_image}
+local rbutton = iup.button{title = "Oh Snap!", action = flip}
 
 local dlg = iup.dialog{
   title = "Oh Snap!",
   placement = "MAXIMIZED";
-  iup.hbox{lbutton,cnv,rbutton}}
+  iup.hbox{lbutton,cnv,rbutton}
+}
 
 local in_loop = true
 
@@ -88,6 +101,10 @@ end
 function dlg:k_any(c)
   if c == iup.K_q or c == iup.K_ESC then
     return iup.CLOSE
+  end
+
+  if c == iup.K_f then
+    flip()
   end
 
   if c == iup.K_F1 then
