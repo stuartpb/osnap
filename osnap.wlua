@@ -149,23 +149,21 @@ function dlg:close_cb()
 end
 
 function dlg:k_any(c)
-  if c == iup.K_q or c == iup.K_ESC then
+  if c == iup.K_q
+  or c == iup.K_ESC then
     return iup.CLOSE
-  end
-
-  if c == iup.K_f then
+  elseif c == iup.K_h then
     flip()
-  end
-
-  if c == iup.K_F1 then
-    if fullscreen then
-      fullscreen = false
-      dlg.fullscreen = "No"
+  elseif c == iup.K_F11 then
+    if dlg.fullscreen == "YES" then
+      dlg.fullscreen = "NO"
     else
-      fullscreen = true
-      dlg.fullscreen = "Yes"
+      dlg.fullscreen = "YES"
     end
     iup.SetFocus(cnv)
+  elseif c == iup.K_SP then
+    save_image()
+    return iup.IGNORE
   end
 end
 
