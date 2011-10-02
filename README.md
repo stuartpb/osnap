@@ -1,3 +1,5 @@
+# osnap: a simple webcam snapshooter
+
 # Requirements
 
 To run osnap.wlua, you'll need:
@@ -15,12 +17,18 @@ Outside of Windows, check your local package manager (which will most likely hav
 
 Run osnap.wlua with a Lua interpreter like wlua.exe for Windows.
 
+# Usage
+
+Press the "oh snap" buttons on either side of the frame (or the spacebar) to take a picture. (It will be saved as an epoch-time-named JPEG in the working directory.)
+
+Drag across the center of the preview horizontally (or press the H key) to flip it.
+
+Press F11 to toggle fullscreen.
+
 # Roadmap
 
-##1.1
-
-- Preview flipping
-
-##The Year 2000
-
-- Overlay(s)
+- Sooner:
+  - Canvas-based buttons
+  - Access to camera options dialog
+- Later:
+  - Overlay(s)
