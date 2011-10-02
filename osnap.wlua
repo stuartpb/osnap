@@ -12,6 +12,10 @@ local capw, caph = vc:GetImageSize()
 local aspect_ratio = capw / caph --almost certainly 4/3 but
 local initimgsize = string.format("%ix%i", capw, caph)
 
+--I'll have to figure out how to change the image
+--position before implementing flipping
+local flipfactor = 1
+
 local frbuf = im.ImageCreate(capw, caph, im.RGB, im.BYTE)
 local gldata, glformat = frbuf:GetOpenGLData()
 
@@ -20,7 +24,8 @@ cnv = iup.glcanvas{buffer="DOUBLE", rastersize = initimgsize}
 function cnv:resize_cb(width, height)
   iup.GLMakeCurrent(self)
   gl.Viewport(0, 0, width, height)
-  gl.PixelZoom(width / capw, height / caph)
+  gl.RasterPos(-flipfactor,-1)
+  gl.PixelZoom(width / capw * flipfactor, height / caph)
 end
 
 function cnv:action(x, y)

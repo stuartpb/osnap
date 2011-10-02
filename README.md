@@ -15,11 +15,12 @@ Outside of Windows, check your local package manager (which will most likely hav
 
 Run osnap.wlua with a Lua interpreter like wlua.exe for Windows.
 
-# TODO
+# Roadmap
 
-Features missing for 1.1:
+##1.1
+
 - Preview flipping
 
-Future
+##The Year 2000
 
 - Overlay(s)
