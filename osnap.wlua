@@ -4,6 +4,9 @@ local im = require "imlua"
 -- The IM Capture library is required to get data
 -- from the webcam.
 require "imlua_capture"
+-- CalcHistoImageStatistics from the IM Processing library
+-- is used to determine if the camera has been covered.
+require "imlua_process"
 -- LuaGL is used to draw the preview to the screen efficiently.
 local gl = require "luagl"
 -- CanvasDraw is used to draw the side buttons.
@@ -265,8 +268,21 @@ function dlg:resize_cb(w,h)
   rbutton.rastersize = ixi(rbutw, h)
 end
 
+local blackout_start
+
 local function refresh_frame()
   vc:Frame(last_frame,-1)
+
+  local median, mean = im.CalcHistoImageStatistics(last_frame)
+  local maxtotal = median[0] + median[1] + median[2]
+  if maxtotal < 32 then
+    if not blackout_start then
+      blackout_start = os.time()
+    elseif os.time() > blackout_start + 2 then
+      iup.ExitLoop()
+    end
+  end
+
   iup.Update(preview)
 end
 

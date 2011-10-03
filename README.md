@@ -7,6 +7,7 @@ To run osnap.wlua, you'll need:
 - [Lua](http://lua.org)
 - [IUPLua](http://www.tecgraf.puc-rio.br/iup/)
 - [IMLua](http://www.tecgraf.puc-rio.br/im/)
+- [CDLua](http://www.tecgraf.puc-rio.br/cd/)
 - [LuaGL](http://luagl.sourceforge.net/)
 
 On Windows, you can get all this and more by installing [Lua for Windows](http://code.google.com/p/luaforwindows/downloads/detail?name=LuaForWindows_v5.1.4-45.exe).
