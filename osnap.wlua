@@ -21,6 +21,7 @@ local vc = im.VideoCaptureCreate()
 
 -- Connect to the first webcam.
 -- TODO: Enumerate cameras, prompt if more than one
+-- (and save the option / make it configurable)
 vc:Connect(0)
 
 -- The dimensions of the capture feed.
@@ -109,8 +110,25 @@ local function get_filename()
   --The directory for osnap images.
   local osnap_dir = pics_dir .. '/osnap'
   --The filename format.
-  --todo: check if filename is already taken and don't clobber it
-  return string.format(osnap_dir .. "/%i.jpg", os.time())
+  local filename = string.format(osnap_dir .. "/%i", os.time())
+  --The file extension (should probably move this elsewhere,
+  --  to match configuration with the image saving).
+  local extension = '.jpg'
+
+  local finalname = filename
+
+  -- check if filename is already taken and don't clobber it
+  local file = io.open(finalname .. extension,'r')
+  local retries = 0
+
+  while file do
+    file:close()
+    finalname = string.format("%s-%i", filename, retries+2)
+    file = io.open(finalname .. extension,'r')
+    retries = retries + 1
+  end
+
+  return finalname .. extension
 end
 
 -- The starting hue for the buttons [0, 1).
