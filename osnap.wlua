@@ -154,7 +154,7 @@ end
 
 -- Function to save the last frame to file.
 -- Called by snap_pic, which also performs the actions
---that generate feedback to the user (the snappers changing color).
+-- that generate feedback to the user (the snappers changing color).
 local function save_image()
   local filename = get_filename()
   last_frame:Save(filename,"JPEG")
@@ -163,14 +163,20 @@ end
 -- Forward declaration of buttons which get modified when snapping a pic
 local lbutton, rbutton
 
--- Function to take a picture.
--- Saves the last frmae to a file, then performs feedback actions.
-local function snap_pic()
-  save_image()
+-- Perform actions signifying feedback that the picture has been taken
+
+local function shutter_feedback()
   button_hue = (button_hue + button_hue_step) % 1
   local newbgc = isisi(hue_to_rgb(button_hue))
   lbutton.BGCOLOR = newbgc
   rbutton.BGCOLOR = newbgc
+end
+
+-- Function to take a picture.
+-- Saves the last frame to a file, then performs feedback actions.
+local function snap_pic()
+  save_image()
+  shutter_feedback()
 end
 
 -- Resizes the preview area on the canvas.
@@ -294,13 +300,15 @@ local blackout_start
 local function refresh_frame()
   vc:Frame(last_frame,-1)
 
-  local median, mean = im.CalcHistoImageStatistics(last_frame)
-  local maxtotal = median[0] + median[1] + median[2]
-  if maxtotal < 6 then
-    if not blackout_start then
-      blackout_start = os.time()
-    elseif os.time() > blackout_start + 2 and blackout then
-      iup.ExitLoop()
+  if blackout then
+    local median, mean = im.CalcHistoImageStatistics(last_frame)
+    local maxtotal = median[0] + median[1] + median[2]
+    if maxtotal < 6 then
+      if not blackout_start then
+        blackout_start = os.time()
+      elseif os.time() > blackout_start + 2 then
+        iup.ExitLoop()
+      end
     end
   end
 
@@ -311,6 +319,8 @@ local frame_timer = iup.timer{
   time = 10,
   action_cb = refresh_frame
 }
+
+--Key handling.
 
 function dlg:k_any(c)
   if c == iup.K_q
