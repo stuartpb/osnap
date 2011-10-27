@@ -362,7 +362,7 @@ do
   local function keypress_cb(self, c, press)
     if press == 1 and ondown[c] then
       return ondown[c]() or iup.IGNORE
-    elseif onup[c] then
+    elseif press == 0 and onup[c] then
       return onup[c]() or iup.IGNORE
     end
   end
