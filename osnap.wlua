@@ -341,11 +341,23 @@ do
     return iup.CLOSE
   end
 
-  ondown[iup.K_q] = exit
-  ondown[iup.K_ESC] = exit
   ondown[iup.K_h] = flip
   ondown[iup.K_F11] = toggle_fullscreen
-  ondown[iup.K_SP] = snap_pic
+  local keysets = {
+    {nil, exit;
+      iup.K_q, iup.K_ESC,
+    },
+    {snap_pic, nil;
+      iup.K_SP, iup.K_CR,
+    }
+  }
+  for i=1, #keysets do
+    local set = keysets[i]
+    for ki=3, #set do
+      ondown[set[ki]] = set[1]
+      onup[set[ki]] = set[2]
+    end
+  end
 
   local function keypress_cb(self, c, press)
     if press == 1 and ondown[c] then
