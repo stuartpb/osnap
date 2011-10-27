@@ -97,6 +97,9 @@ local preview = iup.glcanvas{
 -- Set to -1 to start with the image flipped.
 local flipfactor = 1
 
+--Whether to close the app when
+local blackout = false
+
 --Function that determines filenames for new images.
 local function get_filename()
   --The user's home directory on Windows 7 (ie. 'C:\Users\Stuart').
@@ -275,10 +278,10 @@ local function refresh_frame()
 
   local median, mean = im.CalcHistoImageStatistics(last_frame)
   local maxtotal = median[0] + median[1] + median[2]
-  if maxtotal < 32 then
+  if maxtotal < 6 then
     if not blackout_start then
       blackout_start = os.time()
-    elseif os.time() > blackout_start + 2 then
+    elseif os.time() > blackout_start + 2 and blackout then
       iup.ExitLoop()
     end
   end
