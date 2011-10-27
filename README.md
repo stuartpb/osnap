@@ -29,7 +29,9 @@ Press F11 to toggle fullscreen.
 # Roadmap
 
 - Sooner:
-  - Canvas-based buttons
+  - Fancy canvas-based buttons
+  - Smarter keyboard input / focus handling
+    - Right now I just giving all canvases the same key handler.
   - Access to camera options dialog
 - Later:
   - Overlay(s)

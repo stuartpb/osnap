@@ -282,6 +282,7 @@ rbutton = iup.canvas{bgcolor = snapcanbgc, button_cb = snapper_button_cb, border
 
 local dlg = iup.dialog{
   title = "Oh Snap!",
+  startfocus = preview,
   placement = "MAXIMIZED";
   iup.hbox{lbutton,preview,rbutton}
 }
@@ -320,29 +321,50 @@ local frame_timer = iup.timer{
   action_cb = refresh_frame
 }
 
---Key handling.
-
-function dlg:k_any(c)
-  if c == iup.K_q
-  or c == iup.K_ESC then
-    return iup.CLOSE
-  elseif c == iup.K_h then
-    flip()
-  elseif c == iup.K_F11 then
-    if dlg.fullscreen == "YES" then
-      dlg.fullscreen = "NO"
-    else
-      dlg.fullscreen = "YES"
-    end
-    iup.SetFocus(preview)
-  elseif c == iup.K_SP then
-    snap_pic()
-    return iup.IGNORE
+local function toggle_fullscreen()
+  if dlg.fullscreen == "YES" then
+    dlg.fullscreen = "NO"
+  else
+    dlg.fullscreen = "YES"
   end
+  iup.SetFocus(preview) --why am I doing this? not sure.
+end
+
+--Key handling.
+do
+  --Tables for key callbacks on up and down.
+  local ondown = {}
+  local onup = {}
+
+  --Function to exit the app.
+  local function exit()
+    return iup.CLOSE
+  end
+
+  ondown[iup.K_q] = exit
+  ondown[iup.K_ESC] = exit
+  ondown[iup.K_h] = flip
+  ondown[iup.K_F11] = toggle_fullscreen
+  ondown[iup.K_SP] = snap_pic
+
+  local function keypress_cb(self, c, press)
+    if press == 1 and ondown[c] then
+      return ondown[c]() or iup.IGNORE
+    elseif onup[c] then
+      return onup[c]() or iup.IGNORE
+    end
+  end
+
+  preview.keypress_cb = keypress_cb
+  lbutton.keypress_cb = keypress_cb
+  rbutton.keypress_cb = keypress_cb
 end
 
 -- Show the dialog
 dlg:show()
+--Even though STARTFOCUS is set for dlg,
+--this is still kind of the only good way to set the focus.
+iup.SetFocus(preview)
 --Start pulling from the camera feed
 vc:Live(1)
 --Start updating frames
