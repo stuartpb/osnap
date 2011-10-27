@@ -172,9 +172,38 @@ local function shutter_feedback()
   rbutton.BGCOLOR = newbgc
 end
 
+--Foward declaration of the timer that refreshes the camera capture frame.
+local frame_timer
+
+-- Freeze the camera update timer.
+local function freeze_capturing()
+  frame_timer.run = "NO"
+end
+
+local function resume_capturing()
+  frame_timer.run = "YES"
+end
+
+-- Function for when a shutter button is pushed down,
+-- but yet to be released.
+local function shutter_down()
+  --save the pic on press and not on release because we are SNAPPY
+  save_image()
+  shutter_feedback()
+  freeze_capturing()
+end
+
 -- Function to take a picture.
 -- Saves the last frame to a file, then performs feedback actions.
-local function snap_pic()
+local function shutter_up()
+  resume_capturing()
+end
+
+-- Function for atomic shutter methods
+-- that don't have a distinct down and up.
+-- Analogous to shutter_down immediately followed by shutter_up,
+-- but skipping the fancy stuff.
+local function shutter_actuate()
   save_image()
   shutter_feedback()
 end
@@ -270,9 +299,12 @@ function preview:action(x, y)
 end
 
 local function snapper_button_cb(self, but, pressed, x, y, status)
-  --do it on press and not on release because we are SNAPPY
-  if but == iup.BUTTON1 and pressed == 1 then
-    snap_pic()
+  if but == iup.BUTTON1 then
+    if pressed == 1 then
+      shutter_down()
+    else
+      shutter_up()
+    end
   end
 end
 
@@ -316,7 +348,7 @@ local function refresh_frame()
   iup.Update(preview)
 end
 
-local frame_timer = iup.timer{
+frame_timer = iup.timer{
   time = 10,
   action_cb = refresh_frame
 }
@@ -343,11 +375,12 @@ do
 
   ondown[iup.K_h] = flip
   ondown[iup.K_F11] = toggle_fullscreen
+
   local keysets = {
     {nil, exit;
       iup.K_q, iup.K_ESC,
     },
-    {snap_pic, nil;
+    {shutter_down, shutter_up;
       iup.K_SP, iup.K_CR,
     }
   }
@@ -359,11 +392,20 @@ do
     end
   end
 
+  local pressed = {}
   local function keypress_cb(self, c, press)
-    if press == 1 and ondown[c] then
-      return ondown[c]() or iup.IGNORE
-    elseif press == 0 and onup[c] then
-      return onup[c]() or iup.IGNORE
+    if press == 1 then
+      if not pressed[c] then
+        pressed[c]=true
+        if ondown[c] then
+          return ondown[c]() or iup.IGNORE
+        end
+      end
+    elseif press == 0 then
+      pressed[c]=nil
+      if onup[c] then
+        return onup[c]() or iup.IGNORE
+      end
     end
   end
 
