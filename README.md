@@ -1,6 +1,6 @@
 # osnap: a simple webcam snapshooter
 
-# Requirements
+## Requirements
 
 To run osnap.wlua, you'll need:
 
@@ -14,11 +14,11 @@ On Windows, you can get all this and more by installing [Lua for Windows](http:/
 
 Outside of Windows, check your local package manager (which will most likely have packages for Lua) and/or Sourceforge (there are some good tips out there for setting up the files you can get from Sourceforge if you search for them).
 
-# Running
+## Running
 
 Run osnap.wlua with a Lua interpreter like wlua.exe for Windows.
 
-# Usage
+## Usage
 
 Press the "oh snap" buttons on either side of the frame (or the spacebar) to take a picture. (It will be saved as an epoch-time-named JPEG in the working directory.)
 
@@ -26,7 +26,7 @@ Drag across the center of the preview horizontally (or press the H key) to flip 
 
 Press F11 to toggle fullscreen.
 
-# Roadmap
+## Roadmap
 
 - Sooner:
   - Fancy canvas-based buttons
@@ -35,3 +35,7 @@ Press F11 to toggle fullscreen.
   - Access to camera options dialog
 - Later:
   - Overlay(s)
+
+## Footer
+
+[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=stuartpb&url=https://github.com/stuartpb/osnap&title=osnap&language=en_GB&tags=github&category=software)
